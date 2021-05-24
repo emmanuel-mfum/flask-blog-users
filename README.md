@@ -130,6 +130,82 @@ We then use the decorator above route function for adding a new post, editing a 
 ![image](https://user-images.githubusercontent.com/55893421/119410353-b44dcf00-bcb6-11eb-8269-828d4f0f73d6.png)
 
 
+## Establish relationships between tables in our database
+
+The fourth step is to create relationships in our database. We know that the first user of the blog is also the admin. It would make sense to link blog posts to 
+this account and perhaps also grant admin privileges to other users so that they can write blog posts and have them link to their own account.
+
+Therefore, we need to create a relationship between the User table and the BlogPost table in order to link them together.So we can see which BlogPosts a User has written. 
+Or see which User is the author of a particular BlogPost.
+
+If we were just writing Python code, you could imagine creating a User object which has a property called posts that contains a List of BlogPost objects.
+
+```python
+class User:
+    def __init__(self, name, email, password):
+         self.name = name
+         self.email = email
+         self.password = password
+         self.posts = []
+ 
+class BlogPost:
+    def __init__(self, title, subtitle, body):
+         self.title = title
+         self.subtitle = subtitle
+         self.body = body
+ 
+new_user = User(
+    name="Emmanuel",
+    email="emmanuel@mail.com",
+    password=123456,
+    posts=[
+        BlogPost(
+            title="Life of Cactus",
+            subtitle="So Interesting",
+            body="blah blah"
+        )
+    ]        
+}
+```
+
+This would make it easy to find all the BlogPosts a particular user has written. But what about the other way around? 
+How can you find the author of a particular BlogPost object? That is why we use relational databases instead of a simple Python structure like a list.
+
+In relational databases such as SQLite, MySQL or Postgresql we can to define a relationship between tables using a ForeignKey and a relationship() method.
+
+If we wanted to create a One to Many relationship between the User Table and the BlogPost table, where One User can create Many BlogPost objects, we can use the SQLAlchemy docs to achieve this : https://docs.sqlalchemy.org/en/13/orm/basic_relationships.html
+
+So in our case, the User class (users table) is the parent:
+
+![image](https://user-images.githubusercontent.com/55893421/119413243-40fa8c00-bcbb-11eb-9fae-b2086a1ce5e2.png)
+
+The BlogPost class (blog_posts) is the child: 
+
+![image](https://user-images.githubusercontent.com/55893421/119413507-bcf4d400-bcbb-11eb-83c2-be4cbe75b534.png)
+
+We added a foreign key "author_id" in the BlogPost class, an integers that refers to the property "id" inside the table "users".
+
+In the parent (User class), we added a "posts" property which will be like a list refering to all the BlogPost objects attached to that User
+We use the relationship() for that case and specify the name of the class to which these objects will belong (BlogPost).
+To make a bidirectional relationship in one-to-many, we need to use the "back_populates" parameter which connects to the two tables together.
+That parameter acts like a pointer to a particular property in the parent/child table (vice-versa)
+
+After all that, we must delete and re-initialize our database, since we just modified the configuration of our tables (we added a new column, author_id).
+
+To display the author's name of a blog post, since the author property of BlogPost is now a User object, we can use that to our advantage and tap into that property
+to access the "name" property of the User class.
+
+In index.html:
+
+![image](https://user-images.githubusercontent.com/55893421/119415971-a1d89300-bcc0-11eb-86a2-ee581763e59d.png)
+
+In post.html:
+
+![image](https://user-images.githubusercontent.com/55893421/119416021-b9b01700-bcc0-11eb-9e63-e6ab33c0234a.png)
+
+
+
+
 
 
 
