@@ -93,6 +93,46 @@ We write the following code inside the header.html file:
 Lastly for this step is to code up the "/logout" route so that when the user clicks on the LOG OUT button, it logs them out and takes them back to the home page.
 
  ![image](https://user-images.githubusercontent.com/55893421/119286816-3389c700-bc13-11eb-8166-6085f21392e4.png)
+ 
+ 
+ ## Protect routes
+ 
+ The third step is to protect some of the routes we just made. In the case of this blog, the first registered user (the user with the id of 1) will be the admin.
+ Only the admin will be able to create new blog posts, edit posts and delete posts.
+ 
+ We can therefore make sure that only the admin user can see the "Create New Post" and "Edit Post" and Delete buttons.
+ 
+ ![image](https://user-images.githubusercontent.com/55893421/119409285-10afef00-bcb5-11eb-81cf-4f7abc1fed83.png)
+
+We do this by using conditionals in Jinja syntax in "index.html"
+
+![image](https://user-images.githubusercontent.com/55893421/119409397-40f78d80-bcb5-11eb-8af6-fef0696386df.png)
+
+The same in "post.html"
+
+But just because we remove those buttons from the view of other users doesn't mean that they no longer have access to the routes tied to these buttons.
+In fact, the user could very well try to manually access these routes (the /edit-post or /new-post or /delete routes). Usually we could simply use a Python decorator
+above the route function of each route, but login_required will still allow non-admin logged in users to manually access those routes. We therefore have to implement our 
+own function decorator called "@admin_only".
+
+![image](https://user-images.githubusercontent.com/55893421/119409988-1bb74f00-bcb6-11eb-8641-88415d9fa05d.png)
+
+This function decorator is in fact a function that will wrap around a route function defined below and and check if the current user is not authenticated or the current user's
+id is not 1. If one of these two condition is true, trying to reach a route defined by a route function wrapped by such decorator will result in a 403 HTTP error.
+Otherwise, the function wrapped by the decorator is returned.
+
+We then use the decorator above route function for adding a new post, editing a post and deleting a post.
+
+![image](https://user-images.githubusercontent.com/55893421/119410227-81a3d680-bcb6-11eb-981f-2c7a34b2bddb.png)
+
+![image](https://user-images.githubusercontent.com/55893421/119410308-a4ce8600-bcb6-11eb-84ef-e8a96b531939.png)
+
+![image](https://user-images.githubusercontent.com/55893421/119410353-b44dcf00-bcb6-11eb-8269-828d4f0f73d6.png)
+
+
+
+
+
 
 
 
