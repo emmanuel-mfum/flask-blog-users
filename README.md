@@ -204,6 +204,86 @@ In post.html:
 ![image](https://user-images.githubusercontent.com/55893421/119416021-b9b01700-bcc0-11eb-9e63-e6ab33c0234a.png)
 
 
+## Allow any user to add comments to the blog's posts
+
+To allow the creation of comments we need to create a FlaskForm class named "CommentForm". This class will contain a single CKEditorField for users to write their
+comments.
+
+![image](https://user-images.githubusercontent.com/55893421/119572601-fe02ec00-bd80-11eb-8be0-5ff2dcc26b16.png)
+
+
+Then, we must allow the users to leave a comment and save into our database This means we need to create a new table in our database called "Comment" where the 
+tablename is "comments". It contains an id and a text property which will respectively be the primary key and the text entered into the CKEditor.
+
+![image](https://user-images.githubusercontent.com/55893421/119572952-897c7d00-bd81-11eb-88a5-94a1bb59bd0e.png)
+
+This table will save as entries the various comments made on the diffferent posts on our blog.
+
+Using the same logic of relationship between our "users" and "blog_posts" database tables, we must also establish a similar relationship between the "users" table
+and the "comments" table. This is because each user will be tied with different comments throughout our blog. 
+
+We therefore establish a One-to-Many relationship between the User Table (Parent) and the Comment table (Child). Where One User is linked to Many Comment objects:
+
+![image](https://user-images.githubusercontent.com/55893421/119573759-b3826f00-bd82-11eb-980e-7bde1573740a.png)
+
+![image](https://user-images.githubusercontent.com/55893421/119573810-c137f480-bd82-11eb-806c-e5bab424c0af.png)
+
+
+We also need to establish a One to Many relationship between each BlogPost object (Parent) and Comment object (Child). 
+Where each BlogPost can have many associated Comment objects.
+
+![image](https://user-images.githubusercontent.com/55893421/119574138-3acfe280-bd83-11eb-9893-ae32cb110c21.png)
+
+![image](https://user-images.githubusercontent.com/55893421/119574170-47ecd180-bd83-11eb-92c6-9a4d4758406d.png)
+
+At this point, we need to delete our exisiting database and re-initialize a new one as we just modified our tables.
+
+
+If we want login as non-admin user and write a comment and try to save it, we need to update the "/post/<int:post_id>" route.
+We must also make sure that only authenticated (logged-in) users can save their comment. 
+Otherwise, they should see a flash message telling them to log in and redirect them to the /login route.
+
+![image](https://user-images.githubusercontent.com/55893421/119576348-918aeb80-bd86-11eb-9579-bb156affcd70.png)
+
+Afterwards, we have to update the post.html file so that it can display all the comments associated with the blog post.
+
+![image](https://user-images.githubusercontent.com/55893421/119576512-e2024900-bd86-11eb-8847-97c0841518ed.png)
+
+We can then add Gravatar images to provide an avatar image for blog commenters.
+
+To that effect, we can import Gravatar from flask_gravatar:
+
+![image](https://user-images.githubusercontent.com/55893421/119576736-50dfa200-bd87-11eb-810d-51e0c7d1f5d6.png)
+
+Once, we have the Gravatar module, we can use it to initialize our app:
+
+![image](https://user-images.githubusercontent.com/55893421/119576837-81274080-bd87-11eb-862f-e05ffa8fedb2.png)
+
+Then inside the post.html file we can use the email of the commenter (by tapping into the "comment_author" property and then the email tied to that User) to
+create a Gravatar avatar just like according to the Gravatar docs.
+
+![image](https://user-images.githubusercontent.com/55893421/119577007-d9f6d900-bd87-11eb-8ba7-9d4ea4a815fa.png)
+
+Lastly, we add a feature in order to remove comments.
+
+Comments should only be removed by either the admin or the user who posted them.
+
+This means we must create a new route for delete comments (similar to the route we have to delete posts):
+
+![image](https://user-images.githubusercontent.com/55893421/119577175-1c201a80-bd88-11eb-8bb4-f228b5346149.png)
+
+In the post.html, we use Jinja syntax to check if the current user corresponds to the admin or the user who posted the comment and if one of these conditions is true,
+the link to delete the comment is displayed and available:
+
+![image](https://user-images.githubusercontent.com/55893421/119577310-60abb600-bd88-11eb-9ef8-37236826a24d.png)
+
+
+
+
+
+
+
+
 
 
 
